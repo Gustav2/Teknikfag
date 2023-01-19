@@ -1,29 +1,50 @@
 #include <avr/io.h>
+unsigned char segment[] = {
+	0b00111111,
+	0b00000110,
+	0b01011011,
+	0b01001111,
+	0b01100110,
+	0b01101101,
+	0b01111101,
+	0b00000111,
+	0b01111111,
+	0b01100111
+};
+
 void initSegment(){
 	DDRD = 0xFF;
-	PORTD = 0;
+	DDRB = 0x03;
+	PORTD = 0x00;
+	PORTB = 0x03;
 }
 
-void turnOn(){
+void turnOn(int segmentNum){	
+	if (segmentNum == 0)
+	{
+		PORTB = 0x02;
+	}
+	else {
+		PORTB = 0x01;
+	}
+	
 	PORTD = 0xFF;
 }
 
 void turnOff(){
-	PORTD = 0;
+	PORTD = 0x00;
+	PORTB = 0x03;
 }
 
-void writeSegment(int number){
-	unsigned char segment[] = {
-		0b11111100,
-		0b01100001,
-		0b11011010,
-		0b11110010,
-		0b01100110,
-		0b10110110,
-		0b10111110,
-		0b11100000,
-		0b11111110,
-		0b11100110
-	};
+void writeSegment(int number, int segmentNum){
+	if (segmentNum == 0)
+	{
+		PORTB = 0x02;
+	}
+	else {
+		PORTB = 0x01;
+	}
+	
 	PORTD = segment[number];
 }
+

@@ -7,6 +7,7 @@
 #define F_CPU 16000000UL
 #define KORT_PAUSE _delay_ms(500)
 #define PAUSE _delay_ms(2000)
+#define RATE 200/2
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -15,34 +16,44 @@
 
 int main()
 {
-	unsigned char i,j;
+
 	// Test af "init7segmentport"
 	initSegment();
 	PAUSE;
 	// Test af Segment
-	turnOn();
+	writeSegment(4, 0);
+    PAUSE;
+	writeSegment(2, 1);
 	PAUSE;
 	turnOff();
 	PAUSE;
-	// Test1 af "Skrivtal"
-	for (j=0; j<10;j++)
-	{
-		for (i=0; i<6; i++)
+
+	int num = 0;
+	unsigned long i = 0;
+	int d0 = 0;
+	int d1 = 0;
+	while (1){
+		if (i > RATE)
 		{
-			PORTD = 1<<i;
-			_delay_ms(100);
+			num++;
+			d0 = num % 10;
+			d1 = num / 10;
+			i = 0;
 		}
+		if (num > 99)
+		{
+			turnOn(0);
+			PAUSE;
+			turnOn(1);
+			PAUSE;
+			turnOff();
+			break;
+		}
+		writeSegment(d0, 0);
+		_delay_ms(1);
+		writeSegment(d1, 1);
+		_delay_ms(1);
+		i++;
 	}
-	turnOff();
-	PAUSE;
-	// Test2 af "Skrivtal"
-	for (i=0; i<=9; i++)
-	{
-		writeSegment(i);
-		KORT_PAUSE;
-	}
-	// Bliv her
-	while (1)
-	{}
 	return 0;
 }
